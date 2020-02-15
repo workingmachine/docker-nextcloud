@@ -1,4 +1,4 @@
-FROM nextcloud:17-apache
+FROM nextcloud:18-apache
 
 RUN set -ex; \
     \
@@ -6,6 +6,7 @@ RUN set -ex; \
     apt-get install -y --no-install-recommends \
         ffmpeg \
         libmagickcore-6.q16-3-extra \
+        procps \
         smbclient \
         supervisor \
 #       libreoffice \
@@ -51,8 +52,8 @@ RUN mkdir -p \
     /var/run/supervisord \
 ;
 
-COPY supervisord.conf /etc/supervisor/supervisord.conf
+COPY supervisord.conf /
 
 ENV NEXTCLOUD_UPDATE=1
 
-CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
