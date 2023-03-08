@@ -54,6 +54,7 @@ RUN mkdir -p \
 ;
 
 COPY supervisord.conf /
+COPY officeconnect.sh /
 
 ENV NEXTCLOUD_UPDATE=1
 
