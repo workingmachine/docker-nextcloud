@@ -7,12 +7,13 @@ hostname=$(hostname)
 req_path="/index.php/apps/richdocuments/ajax/admin.php"
 url="http://${hostname}/custom_apps/richdocumentscode/proxy.php?req=${req_path}"
 
-while [[ (${cnt} < 5) && -n "${response}" ]]; do
-  sleep 1
+sleep 3
+while [[ (${cnt} < 10) && -n "${response}" ]]; do
   response=$(curl \
            --silent \
            --show-error \
            "${url}")
+  sleep 1
   ((cnt+=1))
 done
 
