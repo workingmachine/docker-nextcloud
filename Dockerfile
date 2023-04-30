@@ -48,13 +48,29 @@ RUN set -ex; \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p \
-    /var/log/supervisord \
-    /var/run/supervisord \
-;
+# set timezone
+ENV TZ=Europe/Vienna
+RUN set -ex; \
+    ln --symbolic --no-dereference --force /usr/share/zoneinfo/$TZ /etc/localtime; \
+    echo $TZ > /etc/timezone
+
+# supervisord configuration
+RUN set -ex; \
+    mkdir --parents /var/log/supervisord /var/run/supervisord
 
 COPY supervisord.conf /
-COPY officeconnect.sh /
+COPY --chown=8005:8005 --chmod=770 cron.sh /
+COPY --chown=8005:8005 --chmod=770 officeconnect.sh /
+
+# create user foo
+RUN set -ex; \
+    useradd --no-create-home --shell /usr/sbin/nologin --uid 8005 foo; \
+    usermod --home /nonexistent foo
+
+# Avoid permission error later. This is likely suboptimal but it seems to work.
+# The error is: PermissionError: [Errno 13] Permission denied: '/var/log/supervisord/supervisord.log'
+RUN set -ex; \
+    chown --recursive 8005:8005 /var/log/supervisord /var/run/supervisord
 
 ENV NEXTCLOUD_UPDATE=1
 
