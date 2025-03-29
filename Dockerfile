@@ -2,6 +2,14 @@ FROM nextcloud:29-apache
 
 RUN set -ex; \
     \
+    apt-get update -y -q; \
+    apt-get install -y -q --no-install-recommends \
+        apt-utils \
+    ; \
+    rm -rf /var/lib/apt/lists/*
+
+RUN set -ex; \
+    \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         ffmpeg \
@@ -14,6 +22,7 @@ RUN set -ex; \
     ; \
     rm -rf /var/lib/apt/lists/*
 
+# install PHP extensions
 RUN set -ex; \
     \
     savedAptMark="$(apt-mark showmanual)"; \
