@@ -6,7 +6,7 @@ RUN set -ex; \
     apt-get install -y -q --no-install-recommends \
         apt-utils \
     ; \
-    rm -rf /var/lib/apt/lists/*
+    apt-get dist-clean
 
 RUN set -ex; \
     \
@@ -14,13 +14,13 @@ RUN set -ex; \
     apt-get install -y --no-install-recommends \
         ffmpeg \
         ghostscript \
-        libmagickcore-6.q16-6-extra \
+#        libmagickcore-7.q16-10-extra < used in base image \
         procps \
         smbclient \
         supervisor \
 #       libreoffice \
     ; \
-    rm -rf /var/lib/apt/lists/*
+    apt-get dist-clean
 
 # install PHP extensions
 RUN set -ex; \
@@ -30,15 +30,16 @@ RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         libbz2-dev \
-        libc-client-dev \
-        libkrb5-dev \
+#        libetpan-dev < replacement for libc-client-dev \
+#        libc-client-dev \
+#        libkrb5-dev \
         libsmbclient-dev \
     ; \
     \
-    docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
+#    docker-php-ext-configure imap --with-kerberos --with-imap-ssl; \
     docker-php-ext-install \
         bz2 \
-        imap \
+#        imap \
     ; \
     pecl install smbclient; \
     docker-php-ext-enable smbclient; \
@@ -55,7 +56,7 @@ RUN set -ex; \
         | xargs -rt apt-mark manual; \
     \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-    rm -rf /var/lib/apt/lists/*
+    apt-get dist-clean
 
 # set timezone
 ENV TZ=Europe/Vienna
